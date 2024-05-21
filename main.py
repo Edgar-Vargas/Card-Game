@@ -51,9 +51,11 @@ class Card(pg.sprite.Sprite):
         self.compareRank = rank
         self.tablePos = position
 
-        self.hover_offset = -15 
-        self.is_hovered = False 
         self.width, self.height = 50, 80  # Original size
+        self.hover_width = 70  # Width when hovered
+
+        self.hover_offset = -15  # Offset to move up by 15 pixels when hovered
+        self.is_hovered = False  # Track hover state
 
         #used for back end caomparisons (different from visual rank)
         self.rank = rank
@@ -69,8 +71,8 @@ class Card(pg.sprite.Sprite):
         elif self.compareRank == 'K':
             self.compareRank = 13
             self.value = 13
+
         #self.update_image()
-    
     def update_image(self):
         card_image = changeImageCard(self.rank, self.suit)
         self.image = pg.transform.scale(card_image, (50, 80))
@@ -113,13 +115,15 @@ class Card(pg.sprite.Sprite):
 
         # Ensure the position is correct when the card is selected
         if self.is_selected:
+            #check if hand array is empty
+            if not HAND_ARRAY: return
             self.rect.topleft = (200 + HAND_ARRAY.index(self) * 65, 100)
             self.update_image()
 
         if self in CARDS_DEALT or self in HAND_ARRAY:
             self.update_image()
         else:
-            self.image.fill(RED) #cover deck on display
+            self.image.fill(RED)
 
     def mouse_over(self):
         return self.rect.collidepoint(self.game.mouse_pos)
@@ -141,7 +145,7 @@ class Game:
         self.clock = pg.time.Clock()
         self.screen = pg.display.set_mode((800, 600))
         self.screen_rect = self.screen.get_rect()          
-        self.fps = 30       
+        self.fps = 5       
         self.all_sprites = pg.sprite.Group()    
         # create cards
         self.create_deck()

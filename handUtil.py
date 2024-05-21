@@ -18,9 +18,14 @@ def checkHand(card_list):
     flush = False
     straight = False
     handText = checkForPairs(card_list)
-    #if flush and straight:
-        #print("Straight Flush!!!")
+    if flush and straight:
+        print("Straight Flush!!!")
     return handText
+
+def calcScore(card_list):
+
+
+    return 111
 
 def blit_text_center(win, font, text):
     render = font.render(text, 1, (200,200,200))
@@ -38,12 +43,15 @@ def checkForStraight(card_list):
         return False
     for i in range(5):
         currentCard = sorted_list[i]
+        #print(currentCard.compareRank)
         #first iteration needs no comparison since its the start of the straight
         if i == 0:
             previous = currentCard.compareRank
             cardsToScore.append(currentCard)
+            #print("previous card is " + str(previous))
             straightCount += 1
             continue
+        #else:
         #since list is always sorted, value diff should always be 1
         if currentCard.compareRank - previous == 1 or currentCard.compareRank - previous == -1 :
             straightCount += 1
@@ -51,11 +59,14 @@ def checkForStraight(card_list):
             previous = currentCard.compareRank
 
     if straightCount >= 5:
+        print("straight!")
         return True
+        #return {True, cardsToScore}
     else:
         return False
 
 def checkForFlush(card_list):
+    #cardsToScore = []
     if len(card_list) < 5 :
         return False
     flushCount = 0
@@ -78,6 +89,7 @@ def checkForFlush(card_list):
     if flushCount >= 5:
         print("FLUSH!")
         return True
+        #return {True, cardsToScore}
 
 #RETURNS string of best hand
 def checkForPairs(card_list):
@@ -115,7 +127,8 @@ def checkForPairs(card_list):
     if threeOfKind and onePair and twoPair : fullHouse = True
     
     straight = checkForStraight(card_list)
-
+    #straight = False
+    #flush = False
     flush = checkForFlush(card_list)
     
     straightFlush = straight and flush
