@@ -2,6 +2,7 @@ import pygame as pg
 from handUtil import checkHand
 import random
 pg.font.init()
+BACKGROUND_IMAGE = "assets//wallpaper.jpg"
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 RED = (255, 200, 200)
@@ -38,6 +39,8 @@ def removeCardsFromTable(selectedCard):
     CARDS_DEALT.remove(selectedCard)
 
 class Card(pg.sprite.Sprite):
+    #cardback attribute for deck
+    card_back_image = pg.image.load("assets/cardback.jpg")
     def __init__(self, game, position, number, suit, rank):
         super().__init__(game.all_sprites)
         self.game = game
@@ -125,7 +128,9 @@ class Card(pg.sprite.Sprite):
         if self in CARDS_DEALT or self in HAND_ARRAY:
             self.update_image()
         else:
-            self.image.fill(RED)
+            self.image = pg.transform.scale(Card.card_back_image, (50, 80))
+            #self.image.fill(RED)
+             
 
     def mouse_over(self):
         return self.rect.collidepoint(self.game.mouse_pos)
@@ -149,7 +154,12 @@ class Game:
         self.screen_rect = self.screen.get_rect()          
         self.fps = 30       
         self.last_click_time = 0 
+
+         # Load the background image
+        self.background_image = pg.image.load(BACKGROUND_IMAGE)
+        self.background_image = pg.transform.scale(self.background_image, self.screen.get_size())
         self.all_sprites = pg.sprite.Group()    
+       
         # create cards
         self.create_deck()
         random.shuffle(DECK)
@@ -212,7 +222,8 @@ class Game:
     
     def draw(self):
         global BEST_HAND
-        self.screen.fill(GREEN)
+        self.screen.blit(self.background_image, (0, 0))  # Blit the background image
+        #self.screen.fill(GREEN)
         self.all_sprites.draw(self.screen) 
         BEST_HAND = checkHand(HAND_ARRAY)
         self.blit_text_center(self.screen, MAIN_FONT, BEST_HAND)
@@ -274,6 +285,7 @@ class Game:
         pg.quit() 
 
 class Button(pg.sprite.Sprite):
+    button_red = pg.image.load("assets/redBackground.jpg")
     def __init__(self, game, width, height, text, callback, img, rect, center):
         super().__init__(game.all_sprites)
         self.game = game
@@ -282,7 +294,7 @@ class Button(pg.sprite.Sprite):
         self.height = height 
         self.text = text
         self.callback = callback
-        self.font = pg.font.SysFont("comicsans", 30)
+        self.font = pg.font.SysFont("Ariel", 30)
         self.image = img
         self.rect = rect
         self.rect.center = center
@@ -291,7 +303,10 @@ class Button(pg.sprite.Sprite):
         self.render_text()
     
     def render_text(self):
-        self.image.fill(self.color)
+         # Blit the button background image
+        background_image = pg.transform.scale(Button.button_red, (self.width, self.height))
+        self.image.blit(background_image, (0, 0))
+        
         text_surf = self.font.render(self.text, True, WHITE)
         # text pos
         text_rect = text_surf.get_rect(center=(self.width // 2, self.height // 2))
