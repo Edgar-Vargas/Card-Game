@@ -4,16 +4,6 @@
 
 This Python-based card game is built using the Pygame library and offers a fun and interactive way to play a card game on your computer. It supports various functionalities such as dealing cards, selecting hands, scoring, and discarding cards.
 
-## Table of Contents
-- [Features](#features)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Gameplay](#gameplay)
-- [Code Structure](#code-structure)
-- [Contributing](#contributing)
-- [License](#license)
-- [Contact](#contact)
-
 ## Features
 - **Interactive User Interface:** Built with Pygame, providing an engaging graphical interface.
 - **Card Selection:** Click on cards to select and form a hand.
@@ -24,27 +14,6 @@ This Python-based card game is built using the Pygame library and offers a fun a
 
 ## Installation
 To get started with this project, follow these steps:
-
-1. **Clone the repository:**
-   ```sh
-   git clone https://github.com/Edgar-Vargas/CardGame.git
-   cd CardGame
-   ```
-
-2. **Install the required dependencies:**
-   Make sure you have Python installed. Then, install Pygame using pip:
-   ```sh
-   pip install pygame
-   ```
-
-3. **Download Card Assets:**
-   Ensure you have the card images in the `assets/PNGcards` directory.
-
-## Usage
-To run the game, execute the following command in your terminal:
-```sh
-python card_game.py
-```
 
 ## Gameplay
 - **Hover Over Cards:** Move your mouse over a card to see it move up, indicating it is ready to be selected.
@@ -99,30 +68,6 @@ def checkForFlush(card_list):
 def checkForPairs(card_list):
     # Function to check for pairs, three of a kind, four of a kind, and full house in the hand
 ```
-
-## Contributing
-We welcome contributions to enhance the game and add new features. To contribute, follow these steps:
-
-1. **Fork the repository**
-2. **Create a new branch:**
-   ```sh
-   git checkout -b feature/YourFeature
-   ```
-3. **Commit your changes:**
-   ```sh
-   git commit -m 'Add some feature'
-   ```
-4. **Push to the branch:**
-   ```sh
-   git push origin feature/YourFeature
-   ```
-5. **Submit a pull request**
-
-## License
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
-## Contact
-If you have any questions or suggestions, feel free to reach out:
 
 - **Edgar Vargas**
 - [GitHub Profile](https://github.com/Edgar-Vargas)
