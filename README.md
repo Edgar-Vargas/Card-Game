@@ -100,30 +100,6 @@ def checkForPairs(card_list):
     # Function to check for pairs, three of a kind, four of a kind, and full house in the hand
 ```
 
-## Contributing
-We welcome contributions to enhance the game and add new features. To contribute, follow these steps:
-
-1. **Fork the repository**
-2. **Create a new branch:**
-   ```sh
-   git checkout -b feature/YourFeature
-   ```
-3. **Commit your changes:**
-   ```sh
-   git commit -m 'Add some feature'
-   ```
-4. **Push to the branch:**
-   ```sh
-   git push origin feature/YourFeature
-   ```
-5. **Submit a pull request**
-
-## License
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
-## Contact
-If you have any questions or suggestions, feel free to reach out:
-
 - **Edgar Vargas**
 - [GitHub Profile](https://github.com/Edgar-Vargas)
 - [LinkedIn](https://www.linkedin.com/in/edgar-vargas)
