@@ -4,16 +4,6 @@
 
 This Python-based card game is built using the Pygame library and offers a fun and interactive way to play a card game on your computer. It supports various functionalities such as dealing cards, selecting hands, scoring, and discarding cards.
 
-## Table of Contents
-- [Features](#features)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Gameplay](#gameplay)
-- [Code Structure](#code-structure)
-- [Contributing](#contributing)
-- [License](#license)
-- [Contact](#contact)
-
 ## Features
 - **Interactive User Interface:** Built with Pygame, providing an engaging graphical interface.
 - **Card Selection:** Click on cards to select and form a hand.
@@ -24,27 +14,6 @@ This Python-based card game is built using the Pygame library and offers a fun a
 
 ## Installation
 To get started with this project, follow these steps:
-
-1. **Clone the repository:**
-   ```sh
-   git clone https://github.com/Edgar-Vargas/CardGame.git
-   cd CardGame
-   ```
-
-2. **Install the required dependencies:**
-   Make sure you have Python installed. Then, install Pygame using pip:
-   ```sh
-   pip install pygame
-   ```
-
-3. **Download Card Assets:**
-   Ensure you have the card images in the `assets/PNGcards` directory.
-
-## Usage
-To run the game, execute the following command in your terminal:
-```sh
-python card_game.py
-```
 
 ## Gameplay
 - **Hover Over Cards:** Move your mouse over a card to see it move up, indicating it is ready to be selected.
