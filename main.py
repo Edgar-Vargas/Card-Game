@@ -1,5 +1,6 @@
 import pygame as pg
-from handUtil import checkHand, checkForStraight, checkForFlush
+from handUtil import checkHand
+import random
 pg.font.init()
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
@@ -118,7 +119,7 @@ class Card(pg.sprite.Sprite):
         if self.is_selected:
             #check if hand array is empty
             if not HAND_ARRAY: return
-            self.rect.topleft = (200 + HAND_ARRAY.index(self) * 65, 100)
+            self.rect.topleft = (250 + HAND_ARRAY.index(self) * 65, 100) #position of selected cards 
             self.update_image()
 
         if self in CARDS_DEALT or self in HAND_ARRAY:
@@ -151,6 +152,7 @@ class Game:
         self.all_sprites = pg.sprite.Group()    
         # create cards
         self.create_deck()
+        random.shuffle(DECK)
         self.deal_cards()
         self.createButtons()
 
