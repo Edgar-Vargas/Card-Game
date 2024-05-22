@@ -18,8 +18,8 @@ def checkHand(card_list):
     flush = False
     straight = False
     handText = checkForPairs(card_list)
-    if flush and straight:
-        print("Straight Flush!!!")
+    #if flush and straight:
+        
     return handText
 
 def calcScore(card_list):
@@ -59,7 +59,7 @@ def checkForStraight(card_list):
             previous = currentCard.compareRank
 
     if straightCount >= 5:
-        print("straight!")
+        #print("straight!")
         return True
         #return {True, cardsToScore}
     else:
@@ -87,7 +87,7 @@ def checkForFlush(card_list):
                 return False
             
     if flushCount >= 5:
-        print("FLUSH!")
+        #print("FLUSH!")
         return True
         #return {True, cardsToScore}
 

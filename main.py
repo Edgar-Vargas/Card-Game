@@ -5,7 +5,7 @@ BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 RED = (255, 200, 200)
 GREEN = (100, 200, 50)
-MAIN_FONT = pg.font.SysFont("comicsans", 44)
+MAIN_FONT = pg.font.SysFont("ariel", 44)
 
 DISCARD_LIMIT = 3
 HANDS_LIMIT = 4
@@ -20,6 +20,7 @@ DISCARD_PILE = []
 CARDS_SELECTED = 0
 MULT = {'Straight Flush': 5, 'Full House': 3.5, 'Four of a Kind': 4,'Flush': 3, 'Straight':2.5, 'Three of a Kind': 2, 'Two Pair': 1.4, 'One Pair': 1.2, 'High Card': 1, "Select Cards": 0}
 BEST_HAND = ""
+TOTAL_SCORE = 0
 
 def changeImageCard(rank, suit):
     fileName = str(rank) + '_of_' + str(suit) + '.png'
@@ -209,7 +210,7 @@ class Game:
         self.all_sprites.draw(self.screen) 
         BEST_HAND = checkHand(HAND_ARRAY)
         self.blit_text_center(self.screen, MAIN_FONT, BEST_HAND)
-      
+        self.draw_score()  # Draw the score in the top left corner
         pg.display.update()
     
    
@@ -222,20 +223,25 @@ class Game:
     def submit_hand(self):
         global CARDS_SELECTED  
         self.score_cards()
-        # Remove cards from hand and add to discard pile
-        self.discard_cards()
+        self.discard_cards() # Remove cards from hand and add to discard pile
+        pg.display.update()
         #HAND_ARRAY.clear()
         print(len(DECK))
-
+    
+    def draw_score(self):
+        score_text = f"Score: {TOTAL_SCORE}"
+        score_surface = MAIN_FONT.render(score_text, True, WHITE)
+        self.screen.blit(score_surface, (10, 10))
+   
     def score_cards(self):
+        global TOTAL_SCORE
         totalScore = 0
         multi = MULT.get(BEST_HAND)
         print("mult is " + str(multi))
         for card in HAND_ARRAY:
-            totalScore += card.value 
+            TOTAL_SCORE += card.value 
        
         totalScore *= multi    
-        print("Score is " + str(totalScore))
 
     def discard_cards(self):
          global CARDS_SELECTED 
