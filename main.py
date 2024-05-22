@@ -30,7 +30,7 @@ def changeImageCard(rank, suit):
 def addToCardsTable(selectedCard):
     global CARDS_DEALT
     CARDS_DEALT.append(selectedCard)
-    print( len(CARDS_DEALT))
+    #print( len(CARDS_DEALT))
 
 def removeCardsFromTable(selectedCard):
     global CARDS_DEALT
@@ -146,7 +146,8 @@ class Game:
         self.clock = pg.time.Clock()
         self.screen = pg.display.set_mode((800, 600))
         self.screen_rect = self.screen.get_rect()          
-        self.fps = 5       
+        self.fps = 30       
+        self.last_click_time = 0 
         self.all_sprites = pg.sprite.Group()    
         # create cards
         self.create_deck()
@@ -167,7 +168,6 @@ class Game:
             #print(newHandCard.rank)
             #create cards for the player hand 
             newCard = Card(self, pos, i, drawnCard.suit, drawnCard.rank)
-            print(newCard.original_pos)
             newCard.tablePos = newCard.original_pos
             addToCardsTable(newCard)
             #add new card to sprite group for displaying 
@@ -194,12 +194,16 @@ class Game:
 
     def events(self):
         self.mouse_pressed = 0
-        self.mouse_pos = pg.mouse.get_pos()        
+        self.mouse_pos = pg.mouse.get_pos()
+        current_time = pg.time.get_ticks()
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 self.running = False
             elif event.type == pg.MOUSEBUTTONDOWN:
-                self.mouse_pressed = event.button
+                if current_time - self.last_click_time > 500:  # Check the cooldown of half a second in between clicks 
+                    self.last_click_time = current_time  # Reset the cooldown timer
+                    self.last_button_click_time = 0  # Button-specific cooldown timer
+                    self.mouse_pressed = event.button
    
     def update(self):
         self.all_sprites.update()
@@ -237,7 +241,7 @@ class Game:
         global TOTAL_SCORE
         totalScore = 0
         multi = MULT.get(BEST_HAND)
-        print("mult is " + str(multi))
+        #print("mult is " + str(multi))
         for card in HAND_ARRAY:
             TOTAL_SCORE += card.value 
        
@@ -294,11 +298,15 @@ class Button(pg.sprite.Sprite):
     def update(self):
         self.check_click()
     
+    #added timer on button clicks since sumbit_hand() was being called multiple times on single button clicks 
     def check_click(self):
         mouse_pos = pg.mouse.get_pos()
         mouse_pressed = pg.mouse.get_pressed()
+        current_time = pg.time.get_ticks()
         if self.rect.collidepoint(mouse_pos) and mouse_pressed[0]:
-            self.callback()
+            if current_time - self.game.last_button_click_time > 1000:  # check if over 1 second has elapsed since last button click 
+                self.game.last_button_click_time = current_time  # Reset the button cooldown timer
+                self.callback()
         
 if __name__ == '__main__':
     g = Game()
