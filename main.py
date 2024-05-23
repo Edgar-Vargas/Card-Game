@@ -11,15 +11,20 @@ MAIN_FONT = pg.font.SysFont("ariel", 44)
 
 DISCARD_LIMIT = 3
 HANDS_LIMIT = 4
+HANDS_PLAYED = 0
+DISCARDS_USED = 0
+DECK_LENGTH = 52
+TARGET_SCORE = 150
 
 SUITS = ['Hearts', "Clubs", "Diamonds", "Spades"]
 RANKS = ['A', 2, 3, 4, 5, 6, 9, 9, 10, 10, 10, 'Q', 'K' ]
 
-HAND_ARRAY = []
-CARDS_DEALT = []
-DECK = []
-DISCARD_PILE = []
+HAND_ARRAY = []  #hand that player plays or discards (up to 5 cards)
+CARDS_DEALT = [] #cards removed from the deck 
+DECK = [] #main deck with 52 cards       
+DISCARD_PILE = [] #cards that are submitted or discarded 
 CARDS_SELECTED = 0
+CARDS_SELECTED_STORAGE = []
 MULT = {'Straight Flush': 5, 'Full House': 3.5, 'Four of a Kind': 4,'Flush': 3, 'Straight':2.5, 'Three of a Kind': 2, 'Two Pair': 1.4, 'One Pair': 1.2, 'High Card': 1, "Select Cards": 0}
 BEST_HAND = ""
 TOTAL_SCORE = 0
@@ -77,7 +82,7 @@ class Card(pg.sprite.Sprite):
             self.compareRank = 13
             self.value = 13
 
-        #self.update_image()
+        self.update_image()
     def update_image(self):
         card_image = changeImageCard(self.rank, self.suit)
         self.image = pg.transform.scale(card_image, (50, 80))
@@ -85,13 +90,15 @@ class Card(pg.sprite.Sprite):
 
     def update(self):
         global CARDS_SELECTED
+        global CARDS_SELECTED_STORAGE
 
         if self.mouse_clicked():
             # When selected card is selected again, return to its original position
-            if self.is_selected:
+            if self.is_selected: #when selected attribute is true, change it false from click 
                 self.is_selected = False
                 HAND_ARRAY.remove(self)
                 CARDS_SELECTED -= 1
+                CARDS_SELECTED_STORAGE.remove(self)
                 addToCardsTable(self)
                 self.rect.topleft = self.original_pos
             # If card is being selected, move to selection area
@@ -101,16 +108,18 @@ class Card(pg.sprite.Sprite):
                     return
                 # Only allows user to select from cards on table or hand (not deck)
                 if self in HAND_ARRAY or (self in CARDS_DEALT):
-                    HAND_ARRAY.append(self)
-                    CARDS_SELECTED += 1
                     self.is_selected = True
+                    HAND_ARRAY.append(self)
+                    CARDS_SELECTED_STORAGE.append(self)
+                    CARDS_SELECTED += 1
                     self.rect.topleft = (200 + (CARDS_SELECTED - 1) * 65, 100)
 
         # Adjust position when mouse is over
-        if self.mouse_over() and not self.is_selected:
-            if not self.is_hovered:
+        if self.mouse_over() :
+            if not self.is_hovered or self in CARDS_SELECTED_STORAGE:
                 self.rect.move_ip(0, self.hover_offset)
                 self.is_hovered = True
+                #self.rect.move_ip(0, -15)  # Increase height position by 15 pixels
         elif self.is_hovered and not self.is_selected:
             if self in HAND_ARRAY:
                 self.rect.topleft = (200 + HAND_ARRAY.index(self) * 65, 100)
@@ -127,6 +136,7 @@ class Card(pg.sprite.Sprite):
 
         if self in CARDS_DEALT or self in HAND_ARRAY:
             self.update_image()
+            
         else:
             self.image = pg.transform.scale(Card.card_back_image, (50, 80))
             #self.image.fill(RED)
@@ -202,7 +212,7 @@ class Game:
         self.discard_button_image = pg.Surface((width, height))
         self.discard_button_rect = self.discard_button_image.get_rect()
         self.discard_button_rect.center = (surf.get_width()//2, surf.get_height()//12)
-        self.discard_button = Button(self, width, height, "Discard", self.discard_cards, self.discard_button_image, self.discard_button_rect, self.discard_button_rect.center)
+        self.discard_button = Button(self, width, height, "Discard", self.discard_pressed, self.discard_button_image, self.discard_button_rect, self.discard_button_rect.center)
 
     def events(self):
         self.mouse_pressed = 0
@@ -228,6 +238,8 @@ class Game:
         BEST_HAND = checkHand(HAND_ARRAY)
         self.blit_text_center(self.screen, MAIN_FONT, BEST_HAND)
         self.draw_score()  # Draw the score in the top left corner
+        self.render_deck_count()  # render deck count
+        self.render_limits() #hands/discards left
         pg.display.update()
     
    
@@ -238,7 +250,10 @@ class Game:
                       2, win.get_height()/2 - render.get_height()/2))
         
     def submit_hand(self):
-        global CARDS_SELECTED  
+        global CARDS_SELECTED
+        global HANDS_PLAYED 
+        if HANDS_PLAYED >= HANDS_LIMIT : return
+        HANDS_PLAYED += 1  
         self.score_cards()
         self.discard_cards() # Remove cards from hand and add to discard pile
         pg.display.update()
@@ -246,9 +261,29 @@ class Game:
         print(len(DECK))
     
     def draw_score(self):
-        score_text = f"Score: {TOTAL_SCORE}"
+        score_text = f"Score: {TOTAL_SCORE} / {TARGET_SCORE}"
         score_surface = MAIN_FONT.render(score_text, True, WHITE)
         self.screen.blit(score_surface, (10, 10))
+
+    def render_deck_count(self):
+        deck_count_text = f"{len(DECK)} / {DECK_LENGTH}"
+        font = pg.font.SysFont("Ariel", 24)
+        text_surface = font.render(deck_count_text, True, WHITE)
+        self.screen.blit(text_surface, (100, 470))  # Adjust the position as needed
+
+    def render_limits(self):
+        hands_limit_text = f"Hands Limit: {HANDS_LIMIT - HANDS_PLAYED}"
+        discard_limit_text = f"Discard Limit: {DISCARD_LIMIT - DISCARDS_USED}"
+        font = pg.font.SysFont("Ariel", 28)
+
+        hands_limit_surface = font.render(hands_limit_text, True, WHITE)
+        discard_limit_surface = font.render(discard_limit_text, True, WHITE)
+
+        hands_limit_rect = hands_limit_surface.get_rect(topright=(self.screen.get_width() - 20, 10))
+        discard_limit_rect = discard_limit_surface.get_rect(topright=(self.screen.get_width() - 20, 60))
+
+        self.screen.blit(hands_limit_surface, hands_limit_rect)
+        self.screen.blit(discard_limit_surface, discard_limit_rect)
    
     def score_cards(self):
         global TOTAL_SCORE
@@ -259,12 +294,21 @@ class Game:
             TOTAL_SCORE += card.value 
        
         totalScore *= multi    
+    
+    def discard_pressed(self):
+        global DISCARDS_USED
 
+        if DISCARDS_USED >= DISCARD_LIMIT : return
+        DISCARDS_USED += 1
+        self.discard_cards()
+         
     def discard_cards(self):
          global CARDS_SELECTED 
+         global DISCARDS_USED
+
          for card in HAND_ARRAY:
             DISCARD_PILE.append(card)
-            #testCount += 1
+            
             #drawn card should replace the card's table position before it was played 
             pos = card.original_pos
             drawnCard = DECK.pop()
