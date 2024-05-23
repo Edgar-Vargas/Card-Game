@@ -1,5 +1,5 @@
 
-
+Link to [Project Showcase](https://www.edgar-vargas-portfolio.com/Cardgame.html/).
 # Card Game
 
 This Python-based card game is built using the Pygame library and offers a fun and interactive way to play a card game on your computer. It supports various functionalities such as dealing cards, selecting hands, scoring, and discarding cards.
