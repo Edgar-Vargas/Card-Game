@@ -14,7 +14,7 @@ HANDS_LIMIT = 4
 HANDS_PLAYED = 0
 DISCARDS_USED = 0
 DECK_LENGTH = 52
-TARGET_SCORE = 150
+TARGET_SCORE = 50
 
 SUITS = ['Hearts', "Clubs", "Diamonds", "Spades"]
 RANKS = ['A', 2, 3, 4, 5, 6, 9, 9, 10, 10, 10, 'Q', 'K' ]
@@ -82,7 +82,7 @@ class Card(pg.sprite.Sprite):
             self.compareRank = 13
             self.value = 13
 
-        self.update_image()
+        #self.update_image()
     def update_image(self):
         card_image = changeImageCard(self.rank, self.suit)
         self.image = pg.transform.scale(card_image, (50, 80))
@@ -164,6 +164,7 @@ class Game:
         self.screen_rect = self.screen.get_rect()          
         self.fps = 30       
         self.last_click_time = 0 
+        self.game_over = False
 
          # Load the background image
         self.background_image = pg.image.load(BACKGROUND_IMAGE)
@@ -174,7 +175,7 @@ class Game:
         self.create_deck()
         random.shuffle(DECK)
         self.deal_cards()
-        self.createButtons()
+        self.createButtons()        
 
     def create_deck(self):
         for s in SUITS:
@@ -187,7 +188,6 @@ class Game:
             pos = (200 + i * 65, 500)
             #remove top of deck list and add to player hand 
             drawnCard = DECK.pop()
-            #print(newHandCard.rank)
             #create cards for the player hand 
             newCard = Card(self, pos, i, drawnCard.suit, drawnCard.rank)
             newCard.tablePos = newCard.original_pos
@@ -222,10 +222,14 @@ class Game:
             if event.type == pg.QUIT:
                 self.running = False
             elif event.type == pg.MOUSEBUTTONDOWN:
-                if current_time - self.last_click_time > 500:  # Check the cooldown of half a second in between clicks 
+                if current_time - self.last_click_time > 200:  # Check the cooldown of half a second in between clicks 
                     self.last_click_time = current_time  # Reset the cooldown timer
                     self.last_button_click_time = 0  # Button-specific cooldown timer
                     self.mouse_pressed = event.button
+            elif event.type == pg.KEYDOWN :
+                print("testtesttesttest")
+                self.game_over = False
+                self.reset_game_state()
    
     def update(self):
         self.all_sprites.update()
@@ -252,10 +256,28 @@ class Game:
     def submit_hand(self):
         global CARDS_SELECTED
         global HANDS_PLAYED 
-        if HANDS_PLAYED >= HANDS_LIMIT : return
+        
         HANDS_PLAYED += 1  
         self.score_cards()
         self.discard_cards() # Remove cards from hand and add to discard pile
+        self.check_score()
+
+        #blit_text_center(WIN, MAIN_FONT, f"Press Any Key To Start Level {game_info.level} ")
+        #pg.display.update()
+        #for event in pg.event.get():
+            #if event.type == pg.QUIT:
+                #pg.quit()
+                #break
+            
+            #if event.type == pg.KEYDOWN:
+                #self.reset_game_state()
+        if HANDS_PLAYED >= 999999:
+            self.game_over = True
+            print("game over")
+            self.reset_game_state()
+            self.show_game_over_screen()
+            return
+            
         pg.display.update()
         #HAND_ARRAY.clear()
         print(len(DECK))
@@ -272,8 +294,8 @@ class Game:
         self.screen.blit(text_surface, (100, 470))  # Adjust the position as needed
 
     def render_limits(self):
-        hands_limit_text = f"Hands Limit: {HANDS_LIMIT - HANDS_PLAYED}"
-        discard_limit_text = f"Discard Limit: {DISCARD_LIMIT - DISCARDS_USED}"
+        hands_limit_text = f"Hands Left: {HANDS_LIMIT -HANDS_PLAYED}"
+        discard_limit_text = f"Discards Left: {DISCARD_LIMIT - DISCARDS_USED}"
         font = pg.font.SysFont("Ariel", 28)
 
         hands_limit_surface = font.render(hands_limit_text, True, WHITE)
@@ -294,6 +316,55 @@ class Game:
             TOTAL_SCORE += card.value 
        
         totalScore *= multi    
+    def check_score(self):
+        global TOTAL_SCORE, TARGET_SCORE
+
+        if TOTAL_SCORE >= TARGET_SCORE:
+            self.reset_game_state()
+       
+
+    def reset_game_state(self):
+        global HANDS_PLAYED, DISCARDS_USED, TOTAL_SCORE, DECK, HAND_ARRAY, CARDS_DEALT, DISCARD_PILE, CARDS_SELECTED, CARDS_SELECTED_STORAGE, BEST_HAND
+        #reset game vars
+        HANDS_PLAYED = 0
+        DISCARDS_USED = 0
+        TOTAL_SCORE = 0
+        HAND_ARRAY = []
+        CARDS_DEALT = []
+        DISCARD_PILE = []
+        CARDS_SELECTED = 0
+        CARDS_SELECTED_STORAGE = []
+        BEST_HAND = ""
+
+        # Recreate and shuffle the deck
+        DECK = []
+        self.create_deck()
+        #DECK = DISCARD_PILE + HAND_ARRAY + CARDS_DEALT + DECK
+        random.shuffle(DECK)
+
+        # Clear the sprite group and recreate the cards
+        self.all_sprites.empty()
+        self.deal_cards()
+        self.createButtons()
+
+    def show_game_over_screen(self):
+        print("in game over function")
+        self.screen.fill(BLACK)
+        game_over_text = "Game Over"
+        prompt_text = "Press any key to continue"
+        font = pg.font.SysFont("Ariel", 64)
+        prompt_font = pg.font.SysFont("Ariel", 32)
+
+        game_over_surf = font.render(game_over_text, True, WHITE)
+        prompt_surf = prompt_font.render(prompt_text, True, WHITE)
+
+        game_over_rect = game_over_surf.get_rect(center=(self.screen.get_width() // 2, self.screen.get_height() // 2 - 50))
+        prompt_rect = prompt_surf.get_rect(center=(self.screen.get_width() // 2, self.screen.get_height() // 2 + 50))
+
+        self.screen.blit(game_over_surf, game_over_rect)
+        self.screen.blit(prompt_surf, prompt_rect)
+        
+        pg.display.update()
     
     def discard_pressed(self):
         global DISCARDS_USED
@@ -322,9 +393,20 @@ class Game:
     def run(self):
         self.running = True
         while self.running:
+            if HANDS_PLAYED >= HANDS_LIMIT:
+                print("in break")
+                self.show_game_over_screen()
+                #self.reset_game_state()
+                self.events()
+                continue
+                #self.draw()
             self.clock.tick(self.fps)
             self.events()        
             self.update()
+            
+            
+
+
             self.draw()        
         pg.quit() 
 

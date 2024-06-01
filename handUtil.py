@@ -15,17 +15,8 @@ MAIN_FONT = pygame.font.SysFont("comicsans", 44)
 def checkHand(card_list):
     if  len(card_list) == 0:
         return 'Select Cards'
-    flush = False
-    straight = False
     handText = checkForPairs(card_list)
-    #if flush and straight:
-        
     return handText
-
-def calcScore(card_list):
-
-
-    return 111
 
 def blit_text_center(win, font, text):
     render = font.render(text, 1, (200,200,200))
@@ -61,7 +52,6 @@ def checkForStraight(card_list):
     if straightCount >= 5:
         #print("straight!")
         return True
-        #return {True, cardsToScore}
     else:
         return False
 
@@ -89,7 +79,6 @@ def checkForFlush(card_list):
     if flushCount >= 5:
         #print("FLUSH!")
         return True
-        #return {True, cardsToScore}
 
 #RETURNS string of best hand
 def checkForPairs(card_list):
@@ -136,6 +125,7 @@ def checkForPairs(card_list):
     highestPrio = get_prio(prioList)
     #print(highestPrio)
     return formatHandText(highestPrio)
+
 def get_prio(prioList): 
     for prio in prioList:
         if prioList.get(prio) is True: return prio
